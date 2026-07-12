@@ -80,7 +80,8 @@ a hit in the next cadence period ("never miss twice", made measurable).
 ## Explicitly out of scope for v1
 - Real payment integration (Stripe/Venmo API)
 - Multi-user auth / invite flow
-- Mobile app
+- Native mobile app (mobile-first PWA covers phone use; Capacitor/React
+  Native only if app-store distribution ever earns its way in)
 - Nudges on successful check-ins
 - Email/push notifications
 
@@ -137,6 +138,10 @@ Features to build (v1, single seeded user, no auth):
    checkin and the next-period checkin status for that habit — so recovery
    rate (miss followed by next-period hit) is queryable from day one. No
    dashboard UI.
+9. Mobile-first responsive design (check-ins happen on the phone; desktop is
+   the secondary view) and installable as a PWA: web manifest + icons so
+   "Add to Home Screen" gives a full-screen app. NO service worker / offline
+   sync complexity — online-only is fine for v1.
 
 DB tables:
 - habits (id, name, cadence, stake_amount, implementation_intention, created_at)
@@ -148,7 +153,8 @@ DB tables:
   similarity_scores, feedback [up|down|null], created_at)
 
 Explicitly skip: real payment integration, multi-user auth/invite flow,
-mobile app, nudges on hit check-ins, email/push notifications.
+native mobile app (PWA covers it), nudges on hit check-ins, email/push
+notifications.
 
 Success condition: I can create a habit, check in daily, and when I log a
 miss with a note, get back a nudge that clearly references a specific past
