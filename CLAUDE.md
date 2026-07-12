@@ -48,12 +48,34 @@ get added once the mechanic is validated. Locked scope lives in
 - Check-in is two taps (hit/miss); note stays optional. No push notifications
   (already out of scope — this is a feature, not a gap).
 
+## Nudge efficacy monitoring (instrument in v1, conclude later)
+Thumbs up/down measures whether nudges FEEL specific; behavior measures
+whether they WORK. Primary metric: recovery rate — % of misses followed by
+a hit in the next cadence period ("never miss twice", made measurable).
+- v1 build requirement: one SQL view `nudge_outcomes` joining
+  nudge → miss checkin → next-period checkin status. No dashboards.
+- Free comparison baked into the design: nudged misses (note + retrieval
+  cleared floor) vs un-nudged misses (below-floor or auto-converted).
+  Directional only — confounded by engagement; single-user n is tiny.
+- Supporting metrics: time-to-recovery, miss-streak length distribution,
+  30-day consistency trend.
+- Guardrails (nudge backfire signals): falling note rate on misses (users
+  avoiding notes to dodge nudges), rising pending→auto-miss rate (app
+  avoidance after misses), consecutive thumbs-downs on one habit.
+- Calibration check: correlate thumbs-up with recovery rate. If up and down
+  nudges recover equally, the feedback button measures vibes — trust the
+  behavioral data instead.
+
 ## v1.5 candidates (on the record, NOT in v1)
 - Miss-reason classification: on note save, Haiku tags the check-in with a
   failure mode (work | sleep | travel | social | motivation), stored as a
   column on checkins. Unlocks aggregate pattern surfacing in nudges ("6 of
   your last 8 misses cite work"). Build only if v1 thumbs-up/down data shows
   grounded nudges are landing.
+- Ghost nudges (once real pod members exist): for a random ~20% of
+  nudge-eligible misses, generate and log the nudge but don't show it
+  (`suppressed: true`). Recovery rate of shown vs ghost = clean randomized
+  measure of nudge efficacy. One boolean + one Math.random().
 
 ## Explicitly out of scope for v1
 - Real payment integration (Stripe/Venmo API)
@@ -106,6 +128,10 @@ Features to build (v1, single seeded user, no auth):
 7. Progress display: rolling 30-day consistency % per habit. NO streak
    counters that reset to zero — a single miss must never visually wipe out
    prior progress.
+8. Monitoring: a SQL view `nudge_outcomes` joining each nudge to its miss
+   checkin and the next-period checkin status for that habit — so recovery
+   rate (miss followed by next-period hit) is queryable from day one. No
+   dashboard UI.
 
 DB tables:
 - habits (id, name, cadence, stake_amount, implementation_intention, created_at)
