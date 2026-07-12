@@ -111,6 +111,11 @@ Features to build (v1, single seeded user, no auth):
    period without a check-in as status=pending. On next app open, the user
    sees pending periods and confirms hit or miss with an optional note.
    Pending older than 3 days auto-converts to miss (no note, no nudge).
+   Cron requirements (Vercel cron is best-effort, no retries):
+   - Idempotent and self-healing: each run processes ALL unprocessed lapsed
+     periods, not just yesterday's — a missed run heals on the next one.
+   - Observable: each run writes a last_run timestamp to a cron_runs table
+     (id, ran_at, periods_processed) so silent failure is queryable.
 4. On a missed check-in WITH a note: embed the note, run pgvector similarity
    search over all past check-in notes (hits and misses), take the top 3
    above a cosine-similarity floor (~0.75, tunable). If nothing clears the

@@ -15,6 +15,8 @@ Scenarios:
 - auto-converted miss (pending > 3 days) → ledger entry, no note, no nudge
 - settled toggle → entry drops out of running balance
 - cron edge cases: lapsed period → pending; pending exactly at 3-day boundary
+- cron self-healing: skip a run, leave two lapsed periods → next run
+  processes both; re-running the same day changes nothing (idempotent)
 
 Invariants:
 - running balance = sum of unsettled entries, always
