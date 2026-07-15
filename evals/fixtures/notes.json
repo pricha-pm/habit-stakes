@@ -1,0 +1,35 @@
+{
+  "comment": "Retrieval fixtures: query notes with expected related/unrelated notes. Used by evals/retrieval.ts to tune the similarity floor empirically.",
+  "notes": [
+    { "id": "work1", "text": "skipped the gym, work ran late again" },
+    { "id": "work2", "text": "couldn't work out, stuck at the office until 9pm" },
+    { "id": "work3", "text": "big deadline this week, no time to exercise" },
+    { "id": "sleep1", "text": "slept terribly, couldn't get up for my morning run" },
+    { "id": "sleep2", "text": "exhausted all day, went to bed without journaling" },
+    { "id": "travel1", "text": "traveling for a wedding, no gym access at the hotel" },
+    { "id": "travel2", "text": "airport day, everything fell apart schedule-wise" },
+    { "id": "social1", "text": "friends came over, we ended up drinking instead" },
+    { "id": "motivation1", "text": "just didn't feel like it today, no real reason" },
+    { "id": "hit-recovery1", "text": "almost skipped but did a short 20 minute session anyway" },
+    { "id": "hit-recovery2", "text": "back at it after missing yesterday, felt great" },
+    { "id": "reading1", "text": "read 25 pages before bed, new personal best" },
+    { "id": "meditation1", "text": "meditated 10 minutes after coffee like planned" }
+  ],
+  "cases": [
+    {
+      "query": "missed the workout, meetings went way over",
+      "expect_related": ["work1", "work2", "work3"],
+      "expect_unrelated": ["reading1", "meditation1"]
+    },
+    {
+      "query": "too tired this morning, snoozed through my alarm",
+      "expect_related": ["sleep1", "sleep2"],
+      "expect_unrelated": ["travel1", "reading1"]
+    },
+    {
+      "query": "on the road this week, hotel has no equipment",
+      "expect_related": ["travel1", "travel2"],
+      "expect_unrelated": ["social1", "meditation1"]
+    }
+  ]
+}

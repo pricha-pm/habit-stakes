@@ -53,6 +53,15 @@ Supabase ── Postgres + pgvector
 
 **Explicitly out of scope for v1:** payment integration, multi-user auth, mobile app, nudges on successful check-ins, email/push notifications (the last one is a feature — notification overload is a top driver of tracker abandonment).
 
+## Running it
+
+1. **Supabase**: create a project at [supabase.com](https://supabase.com), open the SQL editor, and run [supabase/migrations/001_init.sql](supabase/migrations/001_init.sql) (creates tables, the pgvector search function, and the monitoring views).
+2. **Env**: `cp .env.example .env.local` and fill in the Supabase URL + service-role key, `ANTHROPIC_API_KEY` (nudges), `OPENAI_API_KEY` (embeddings), and any random string for `CRON_SECRET`.
+3. **Install & seed**: `npm install`, then `npx tsx scripts/seed.ts` for two habits with ~3 weeks of history (so nudges have something to retrieve on day one).
+4. **Run**: `npm run dev` → [localhost:3000](http://localhost:3000). Trigger miss detection manually with `curl -H "Authorization: Bearer $CRON_SECRET" localhost:3000/api/cron/detect-misses`.
+5. **Deploy**: push to GitHub, import into Vercel, set the same env vars. The daily cron is configured in [vercel.json](vercel.json).
+6. **Checks**: `npm test` (period math, consistency %, cron self-healing logic), `npm run typecheck`, `npx tsx evals/retrieval.ts` (similarity-floor tuning), `npm run evals` (LLM-judged nudge quality — groundedness gate 100%).
+
 ## Project docs
 
 - [CLAUDE.md](CLAUDE.md) — locked v1 scope, evidence-backed UX principles, build prompt
