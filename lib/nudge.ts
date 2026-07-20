@@ -3,7 +3,10 @@ import { db } from "./db";
 
 // Grounding floor: retrieved notes below this cosine similarity are ignored.
 // If nothing clears it, NO nudge is generated — never a generic one.
-const SIMILARITY_FLOOR = Number(process.env.NUDGE_SIMILARITY_FLOOR || 0.75);
+// Tuned live 2026-07-14 for text-embedding-3-small: related notes measure
+// ~0.53-0.74, unrelated ≤0.42, so 0.5 separates cleanly. (The original 0.75
+// was calibrated against models with hotter similarity distributions.)
+const SIMILARITY_FLOOR = Number(process.env.NUDGE_SIMILARITY_FLOOR || 0.5);
 const TOP_K = 3;
 
 type RetrievedNote = {

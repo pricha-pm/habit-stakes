@@ -8,7 +8,7 @@
 import { readFileSync } from "node:fs";
 import { embed } from "../lib/embeddings";
 
-const FLOOR = Number(process.env.NUDGE_SIMILARITY_FLOOR || 0.75);
+const FLOOR = Number(process.env.NUDGE_SIMILARITY_FLOOR || 0.5);
 
 function cosine(a: number[], b: number[]): number {
   let dot = 0,

@@ -24,8 +24,9 @@ get added once the mechanic is validated. Locked scope lives in
 - Nudges: fire only on a missed check-in with a note, via embedding retrieval
   over ALL of that user's past check-in notes (hits and misses)
 - Nudge grounding floor: if no retrieved note clears the similarity threshold
-  (start ~0.75 cosine, tune live), skip the nudge entirely — never send a
-  generic one. Ledger still increments. Auto-converted misses have no note, so
+  (tuned live 2026-07-14: 0.5 cosine for text-embedding-3-small — related
+  notes measure ~0.53-0.74, unrelated ≤0.42), skip the nudge entirely —
+  never send a generic one. Ledger still increments. Auto-converted misses have no note, so
   they never nudge — consistent by design.
 - Providers: Claude (Haiku) via Anthropic API for nudge generation; Voyage or
   OpenAI for embeddings (single env key, decide at build time)
