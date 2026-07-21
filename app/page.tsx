@@ -84,30 +84,43 @@ export default function Home() {
 
   return (
     <main>
-      <header className="flex items-baseline justify-between pt-8 pb-6">
-        <h1 className="font-display text-3xl font-bold">Habit Stakes</h1>
-        <Link href="/ledger" className="text-sm text-moss underline underline-offset-4">
-          Ledger
-        </Link>
+      <header className="pt-8 pb-6">
+        <div className="flex items-baseline justify-between">
+          <h1 className="font-display text-4xl font-bold tracking-tight">
+            Habit <span className="font-normal italic text-ember">Stakes</span>
+          </h1>
+          <Link
+            href="/ledger"
+            className="eyebrow text-moss underline underline-offset-4"
+          >
+            Ledger
+          </Link>
+        </div>
+        <div className="mt-4 h-px bg-ink/10" />
       </header>
 
       {totalOwedEntries.length > 0 && (
-        <div className="mb-6 rounded-xl bg-ember-light px-4 py-3">
+        <div className="mb-6 space-y-2">
           {totalOwedEntries.map(([friend, amount]) => (
-            <p key={friend} className="text-sm">
-              You owe <span className="font-bold text-ember">{friend}</span>{" "}
-              <span className="font-bold text-ember">${amount.toFixed(2)}</span> —{" "}
-              <Link href="/ledger" className="underline underline-offset-2">
-                settle up
+            <div key={friend} className="rounded-2xl bg-ember px-5 py-4 text-paper shadow-sm">
+              <p className="font-display text-lg">
+                You owe <span className="font-bold">{friend}</span>{" "}
+                <span className="font-bold">${amount.toFixed(2)}</span>
+              </p>
+              <Link
+                href="/ledger"
+                className="eyebrow mt-1 inline-block text-paper/80 underline underline-offset-4"
+              >
+                Settle up
               </Link>
-            </p>
+            </div>
           ))}
         </div>
       )}
 
       {result && <MissResult result={result} onDismiss={() => setResult(null)} />}
       {error && (
-        <div className="mb-4 rounded-lg bg-ember-light px-4 py-2 text-sm text-ember">{error}</div>
+        <div className="mb-4 rounded-xl bg-ember-light px-4 py-2 text-sm text-ember">{error}</div>
       )}
 
       {habits === null ? (
@@ -130,7 +143,7 @@ export default function Home() {
 
           <Link
             href="/habits/new"
-            className="mt-8 block rounded-xl border-2 border-dashed border-moss/40 py-3 text-center text-sm font-medium text-moss"
+            className="mt-8 block rounded-full border-2 border-moss/60 py-3 text-center text-sm font-semibold text-moss"
           >
             + New habit
           </Link>
@@ -160,40 +173,48 @@ function MissResult({
   };
 
   return (
-    <div className="mb-6 rounded-xl border border-ember/30 bg-white p-4 shadow-sm">
+    <div className="mb-6 overflow-hidden rounded-2xl border border-ink/10 bg-white shadow-sm">
       {result.owed && (
-        <p className="font-display text-lg">
-          You now owe <span className="font-bold text-ember">{result.owed.to}</span>{" "}
-          <span className="font-bold text-ember">${result.owed.amount.toFixed(2)}</span>
-        </p>
-      )}
-      {result.nudge && (
-        <div className="mt-3 rounded-lg bg-moss-light/50 p-3">
-          <p className="text-sm leading-relaxed">{result.nudge.generated_text}</p>
-          <div className="mt-2 flex items-center gap-3 text-xs opacity-70">
-            <span>Did this feel specific to you?</span>
-            <button
-              onClick={() => sendFeedback("up")}
-              disabled={!!feedback}
-              className={`text-base ${feedback === "up" ? "" : "grayscale opacity-60"}`}
-              aria-label="Nudge felt specific"
-            >
-              👍
-            </button>
-            <button
-              onClick={() => sendFeedback("down")}
-              disabled={!!feedback}
-              className={`text-base ${feedback === "down" ? "" : "grayscale opacity-60"}`}
-              aria-label="Nudge felt generic"
-            >
-              👎
-            </button>
-          </div>
+        <div className="bg-ember px-4 py-4 text-paper">
+          <p className="eyebrow text-paper/70">New balance</p>
+          <p className="mt-1 font-display text-xl">
+            You now owe <span className="font-bold">{result.owed.to}</span>{" "}
+            <span className="font-bold">${result.owed.amount.toFixed(2)}</span>
+          </p>
         </div>
       )}
-      <button onClick={onDismiss} className="mt-3 text-xs underline opacity-60">
-        Dismiss
-      </button>
+      <div className="p-4">
+        {result.nudge && (
+          <div className="rounded-xl bg-moss-light/50 p-3">
+            <p className="text-sm leading-relaxed">{result.nudge.generated_text}</p>
+            <div className="mt-2 flex items-center gap-3 text-xs opacity-70">
+              <span>Did this feel specific to you?</span>
+              <button
+                onClick={() => sendFeedback("up")}
+                disabled={!!feedback}
+                className={`text-base ${feedback === "up" ? "" : "grayscale opacity-60"}`}
+                aria-label="Nudge felt specific"
+              >
+                👍
+              </button>
+              <button
+                onClick={() => sendFeedback("down")}
+                disabled={!!feedback}
+                className={`text-base ${feedback === "down" ? "" : "grayscale opacity-60"}`}
+                aria-label="Nudge felt generic"
+              >
+                👎
+              </button>
+            </div>
+          </div>
+        )}
+        <button
+          onClick={onDismiss}
+          className={`text-xs underline opacity-60 ${result.nudge ? "mt-3" : ""}`}
+        >
+          Dismiss
+        </button>
+      </div>
     </div>
   );
 }
@@ -213,13 +234,17 @@ function PendingSection({
   return (
     <section className="mb-8">
       <h2 className="mb-3 font-display text-lg font-semibold">
-        While you were away — what happened?
+        <span className="mr-1 text-ember">*</span>While you were away — what happened?
       </h2>
       <div className="space-y-3">
         {pendings.map(({ habit, checkin }) => (
-          <div key={checkin.id} className="rounded-xl border border-sand bg-white p-4 shadow-sm">
-            <p className="font-medium">
-              {habit.name} <span className="text-sm opacity-60">· {checkin.period_start}</span>
+          <div
+            key={checkin.id}
+            className="rounded-2xl border border-ink/10 bg-white p-4 shadow-sm"
+          >
+            <p className="font-display text-lg font-semibold">
+              {habit.name}{" "}
+              <span className="text-sm font-normal opacity-60">· {checkin.period_start}</span>
             </p>
             {habit.implementation_intention && (
               <p className="mt-1 text-sm italic opacity-70">
@@ -247,28 +272,28 @@ function HabitCard({
   const periodLabel = habit.cadence === "daily" ? "today" : "this week";
 
   return (
-    <div className="rounded-xl border border-sand bg-white p-4 shadow-sm">
-      <div className="flex items-start justify-between">
+    <div className="rounded-2xl border border-ink/10 bg-white p-4 shadow-sm">
+      <div className="flex items-start justify-between gap-3">
         <div>
-          <h3 className="font-display text-lg font-semibold">{habit.name}</h3>
-          <p className="text-xs opacity-60">
+          <h3 className="font-display text-xl font-semibold">{habit.name}</h3>
+          <p className="eyebrow mt-1 text-ink/45">
             ${Number(habit.stake_amount).toFixed(2)} to {habit.owed_to} per miss ·{" "}
             {habit.cadence}
           </p>
         </div>
         {habit.consistency_pct !== null && (
-          <div className="text-right">
+          <div className="shrink-0 text-right">
             <p className="font-display text-2xl font-bold text-moss">
               {habit.consistency_pct}%
             </p>
-            <p className="text-[10px] uppercase tracking-wide opacity-50">last 30 days</p>
+            <p className="eyebrow text-ink/40">Last 30 days</p>
           </div>
         )}
       </div>
 
       {done ? (
         <p
-          className={`mt-3 inline-block rounded-full px-3 py-1 text-sm font-medium ${
+          className={`mt-3 inline-block rounded-full px-3 py-1 text-sm font-semibold ${
             habit.current_checkin!.status === "hit"
               ? "bg-moss-light text-moss"
               : "bg-ember-light text-ember"
@@ -308,14 +333,14 @@ function CheckinButtons({
         <button
           onClick={() => submit("hit")}
           disabled={busy}
-          className="flex-1 rounded-lg bg-moss py-2.5 font-medium text-white active:scale-95 disabled:opacity-50"
+          className="flex-1 rounded-full bg-moss py-2.5 font-semibold text-white active:scale-95 disabled:opacity-50"
         >
           Hit
         </button>
         <button
           onClick={() => submit("miss")}
           disabled={busy}
-          className="flex-1 rounded-lg bg-ember py-2.5 font-medium text-white active:scale-95 disabled:opacity-50"
+          className="flex-1 rounded-full bg-ember py-2.5 font-semibold text-white active:scale-95 disabled:opacity-50"
         >
           Miss
         </button>
@@ -326,7 +351,7 @@ function CheckinButtons({
           onChange={(e) => setNote(e.target.value)}
           placeholder="What happened? (helps your future nudges)"
           rows={2}
-          className="mt-2 w-full rounded-lg border border-sand bg-paper p-2 text-sm"
+          className="mt-2 w-full rounded-xl border border-sand bg-paper p-2 text-sm"
         />
       ) : (
         <button

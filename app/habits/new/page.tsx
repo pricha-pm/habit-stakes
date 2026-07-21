@@ -49,14 +49,15 @@ export default function NewHabit() {
   return (
     <main>
       <header className="pt-8 pb-6">
-        <Link href="/" className="text-sm text-moss underline underline-offset-4">
+        <Link href="/" className="eyebrow text-moss underline underline-offset-4">
           ← Back
         </Link>
-        <h1 className="mt-2 font-display text-3xl font-bold">New habit</h1>
+        <h1 className="mt-3 font-display text-4xl font-bold tracking-tight">New habit</h1>
+        <div className="mt-4 h-px bg-ink/10" />
       </header>
 
       {activeCount >= 3 && (
-        <div className="mb-4 rounded-xl bg-sand px-4 py-3 text-sm">
+        <div className="mb-4 rounded-2xl border border-ink/10 bg-sand px-4 py-3 text-sm">
           You already have {activeCount} active habits. Research says start small —
           people who track fewer habits stick with them far longer. You can still
           add this one, but consider whether one of the others has earned its keep.
@@ -70,7 +71,7 @@ export default function NewHabit() {
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. Gym, Read 20 pages, Journal"
             required
-            className="w-full rounded-lg border border-sand bg-white p-3"
+            className="w-full rounded-xl border border-sand bg-white p-3"
           />
         </Field>
 
@@ -81,10 +82,10 @@ export default function NewHabit() {
                 key={c}
                 type="button"
                 onClick={() => setCadence(c)}
-                className={`flex-1 rounded-lg border py-2.5 font-medium capitalize ${
+                className={`flex-1 rounded-full border-2 py-2.5 font-semibold capitalize ${
                   cadence === c
-                    ? "border-moss bg-moss-light text-moss"
-                    : "border-sand bg-white opacity-60"
+                    ? "border-moss bg-moss text-white"
+                    : "border-sand bg-white text-ink/50"
                 }`}
               >
                 {c}
@@ -101,7 +102,7 @@ export default function NewHabit() {
             value={stake}
             onChange={(e) => setStake(e.target.value)}
             required
-            className="w-full rounded-lg border border-sand bg-white p-3"
+            className="w-full rounded-xl border border-sand bg-white p-3"
           />
         </Field>
 
@@ -111,7 +112,7 @@ export default function NewHabit() {
             onChange={(e) => setOwedTo(e.target.value)}
             placeholder="A real friend's name — you'll Venmo them"
             required
-            className="w-full rounded-lg border border-sand bg-white p-3"
+            className="w-full rounded-xl border border-sand bg-white p-3"
           />
         </Field>
 
@@ -123,18 +124,18 @@ export default function NewHabit() {
             value={intention}
             onChange={(e) => setIntention(e.target.value)}
             placeholder="After I [make coffee], I will [do this habit]"
-            className="w-full rounded-lg border border-sand bg-white p-3"
+            className="w-full rounded-xl border border-sand bg-white p-3"
           />
         </Field>
 
         {error && (
-          <p className="rounded-lg bg-ember-light px-4 py-2 text-sm text-ember">{error}</p>
+          <p className="rounded-xl bg-ember-light px-4 py-2 text-sm text-ember">{error}</p>
         )}
 
         <button
           type="submit"
           disabled={busy}
-          className="w-full rounded-xl bg-moss py-3.5 font-medium text-white active:scale-95 disabled:opacity-50"
+          className="w-full rounded-full bg-moss py-3.5 font-semibold text-white active:scale-95 disabled:opacity-50"
         >
           {busy ? "Creating…" : "Put money on it"}
         </button>
@@ -154,7 +155,7 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="mb-1.5 block text-sm font-medium">{label}</span>
+      <span className="eyebrow mb-1.5 block text-ink/55">{label}</span>
       {children}
       {hint && <span className="mt-1 block text-xs opacity-60">{hint}</span>}
     </label>

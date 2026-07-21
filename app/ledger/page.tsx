@@ -51,31 +51,35 @@ export default function Ledger() {
   return (
     <main>
       <header className="pt-8 pb-6">
-        <Link href="/" className="text-sm text-moss underline underline-offset-4">
+        <Link href="/" className="eyebrow text-moss underline underline-offset-4">
           ← Back
         </Link>
-        <h1 className="mt-2 font-display text-3xl font-bold">Ledger</h1>
+        <h1 className="mt-3 font-display text-4xl font-bold tracking-tight">Ledger</h1>
+        <div className="mt-4 h-px bg-ink/10" />
       </header>
 
       {error && (
-        <p className="mb-4 rounded-lg bg-ember-light px-4 py-2 text-sm text-ember">{error}</p>
+        <p className="mb-4 rounded-xl bg-ember-light px-4 py-2 text-sm text-ember">{error}</p>
       )}
 
       {friends.length > 0 ? (
         <div className="mb-6 space-y-2">
           {friends.map(([friend, total]) => (
-            <div key={friend} className="rounded-xl bg-ember-light px-4 py-3">
-              <p className="font-display text-xl">
-                You owe <span className="font-bold text-ember">{friend}</span>{" "}
-                <span className="font-bold text-ember">${total.toFixed(2)}</span>
+            <div key={friend} className="rounded-2xl bg-ember px-5 py-4 text-paper shadow-sm">
+              <p className="eyebrow text-paper/70">Outstanding balance</p>
+              <p className="mt-1 font-display text-xl">
+                You owe <span className="font-bold">{friend}</span>{" "}
+                <span className="font-bold">${total.toFixed(2)}</span>
               </p>
-              <p className="text-xs opacity-60">Settle via Venmo, then mark entries below.</p>
+              <p className="mt-1 text-xs text-paper/75">
+                Settle via Venmo, then mark entries below.
+              </p>
             </div>
           ))}
         </div>
       ) : (
         entries !== null && (
-          <p className="mb-6 rounded-xl bg-moss-light px-4 py-3 text-sm text-moss">
+          <p className="mb-6 rounded-2xl bg-moss-light px-4 py-3 text-sm text-moss">
             All settled up. Nothing owed.
           </p>
         )
@@ -85,7 +89,7 @@ export default function Ledger() {
         {(entries ?? []).map((e) => (
           <div
             key={e.id}
-            className={`flex items-center justify-between rounded-lg border border-sand bg-white px-4 py-3 ${
+            className={`flex items-center justify-between rounded-2xl border border-ink/10 bg-white px-4 py-3 ${
               e.settled ? "opacity-50" : ""
             }`}
           >
@@ -93,13 +97,13 @@ export default function Ledger() {
               <p className="text-sm font-medium">
                 ${Number(e.amount).toFixed(2)} to {e.owed_to}
               </p>
-              <p className="text-xs opacity-60">
+              <p className="eyebrow mt-0.5 text-ink/40">
                 {e.habits?.name} · {e.created_at.slice(0, 10)}
               </p>
             </div>
             <button
               onClick={() => toggle(e)}
-              className={`rounded-full px-3 py-1 text-xs font-medium ${
+              className={`rounded-full px-3.5 py-1.5 text-xs font-semibold ${
                 e.settled ? "bg-sand" : "bg-moss text-white"
               }`}
             >
