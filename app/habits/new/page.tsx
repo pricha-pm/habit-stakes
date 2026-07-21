@@ -129,7 +129,7 @@ export default function NewHabit() {
         </Field>
 
         {error && (
-          <p className="rounded-xl bg-ember-light px-4 py-2 text-sm text-ember">{error}</p>
+          <p className="rounded-xl bg-ember-light px-4 py-2 text-sm text-ink">{error}</p>
         )}
 
         <button

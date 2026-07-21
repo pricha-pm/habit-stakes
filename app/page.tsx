@@ -102,14 +102,14 @@ export default function Home() {
       {totalOwedEntries.length > 0 && (
         <div className="mb-6 space-y-2">
           {totalOwedEntries.map(([friend, amount]) => (
-            <div key={friend} className="rounded-2xl bg-ember px-5 py-4 text-paper shadow-sm">
+            <div key={friend} className="rounded-2xl bg-ember px-5 py-4 text-ink shadow-sm">
               <p className="font-display text-lg">
                 You owe <span className="font-bold">{friend}</span>{" "}
                 <span className="font-bold">${amount.toFixed(2)}</span>
               </p>
               <Link
                 href="/ledger"
-                className="eyebrow mt-1 inline-block text-paper/80 underline underline-offset-4"
+                className="eyebrow mt-1 inline-block text-ink/70 underline underline-offset-4"
               >
                 Settle up
               </Link>
@@ -120,7 +120,7 @@ export default function Home() {
 
       {result && <MissResult result={result} onDismiss={() => setResult(null)} />}
       {error && (
-        <div className="mb-4 rounded-xl bg-ember-light px-4 py-2 text-sm text-ember">{error}</div>
+        <div className="mb-4 rounded-xl bg-ember-light px-4 py-2 text-sm text-ink">{error}</div>
       )}
 
       {habits === null ? (
@@ -175,8 +175,8 @@ function MissResult({
   return (
     <div className="mb-6 overflow-hidden rounded-2xl border border-ink/10 bg-white shadow-sm">
       {result.owed && (
-        <div className="bg-ember px-4 py-4 text-paper">
-          <p className="eyebrow text-paper/70">New balance</p>
+        <div className="bg-ember px-4 py-4 text-ink">
+          <p className="eyebrow text-ink/70">New balance</p>
           <p className="mt-1 font-display text-xl">
             You now owe <span className="font-bold">{result.owed.to}</span>{" "}
             <span className="font-bold">${result.owed.amount.toFixed(2)}</span>
@@ -296,7 +296,7 @@ function HabitCard({
           className={`mt-3 inline-block rounded-full px-3 py-1 text-sm font-semibold ${
             habit.current_checkin!.status === "hit"
               ? "bg-moss-light text-moss"
-              : "bg-ember-light text-ember"
+              : "bg-ember-light text-ink"
           }`}
         >
           {habit.current_checkin!.status === "hit" ? "✓ Done" : "✗ Missed"} {periodLabel}
@@ -340,7 +340,7 @@ function CheckinButtons({
         <button
           onClick={() => submit("miss")}
           disabled={busy}
-          className="flex-1 rounded-full bg-ember py-2.5 font-semibold text-white active:scale-95 disabled:opacity-50"
+          className="flex-1 rounded-full bg-ember py-2.5 font-semibold text-ink active:scale-95 disabled:opacity-50"
         >
           Miss
         </button>

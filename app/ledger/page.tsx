@@ -59,19 +59,19 @@ export default function Ledger() {
       </header>
 
       {error && (
-        <p className="mb-4 rounded-xl bg-ember-light px-4 py-2 text-sm text-ember">{error}</p>
+        <p className="mb-4 rounded-xl bg-ember-light px-4 py-2 text-sm text-ink">{error}</p>
       )}
 
       {friends.length > 0 ? (
         <div className="mb-6 space-y-2">
           {friends.map(([friend, total]) => (
-            <div key={friend} className="rounded-2xl bg-ember px-5 py-4 text-paper shadow-sm">
-              <p className="eyebrow text-paper/70">Outstanding balance</p>
+            <div key={friend} className="rounded-2xl bg-ember px-5 py-4 text-ink shadow-sm">
+              <p className="eyebrow text-ink/70">Outstanding balance</p>
               <p className="mt-1 font-display text-xl">
                 You owe <span className="font-bold">{friend}</span>{" "}
                 <span className="font-bold">${total.toFixed(2)}</span>
               </p>
-              <p className="mt-1 text-xs text-paper/75">
+              <p className="mt-1 text-xs text-ink/70">
                 Settle via Venmo, then mark entries below.
               </p>
             </div>

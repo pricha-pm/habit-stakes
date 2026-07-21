@@ -1,13 +1,19 @@
 @import "tailwindcss";
 
+/* Palette: Monet lily-pond reference (dark green / moss green / beige /
+   rosy brown / midnight green). Paper, ink, moss, and ember map directly
+   to given swatches; moss-light/ember-light/sand are tints blended toward
+   paper, since the raw swatches don't have enough contrast on their own to
+   serve as backgrounds behind legible text. Ember pairs with ink (not
+   paper) for text — white/cream text on rosy brown falls below 3:1. */
 @theme {
-  --color-paper: #f7f0e3;
-  --color-ink: #221b15;
-  --color-moss: #2d6a4f;
-  --color-moss-light: #d8f3dc;
-  --color-ember: #9c3a28;
-  --color-ember-light: #f1dccf;
-  --color-sand: #ece1cd;
+  --color-paper: #f7f4d5; /* Beige */
+  --color-ink: #0a3323; /* Dark green — 12.5:1 on paper */
+  --color-moss: #105666; /* Midnight green — 7.4:1 on paper, 8.3:1 with white text */
+  --color-moss-light: #ced4a9; /* Moss green blended toward paper */
+  --color-ember: #d3968c; /* Rosy brown — 5.6:1 with ink text, pairs with ink not paper */
+  --color-ember-light: #ecd8bf; /* Rosy brown blended toward paper */
+  --color-sand: #d3d7ba; /* neutral border tone, beige + dark green */
   --font-display: "Georgia", "Times New Roman", serif;
 }
 
