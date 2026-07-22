@@ -7,6 +7,7 @@ import {
   localDateISO,
   nextPeriodStart,
   weekStartISO,
+  weeklyConsistencySeries,
 } from "../lib/periods";
 
 // 2026-07-08T12:00:00-07:00 (a Wednesday in PT)
@@ -121,5 +122,47 @@ describe("consistencyPct (no streak resets)", () => {
 
   it("returns null with no resolved periods", () => {
     expect(consistencyPct([], NOW, TZ)).toBeNull();
+  });
+});
+
+describe("weeklyConsistencySeries (trend chart data)", () => {
+  it("buckets checkins into their week and computes pct, current week last", () => {
+    const checkins = [
+      { period_start: "2026-07-06", status: "hit" }, // current week (Mon Jul 6)
+      { period_start: "2026-07-07", status: "hit" },
+      { period_start: "2026-07-08", status: "miss" },
+    ];
+    const series = weeklyConsistencySeries(checkins, 2, NOW, TZ);
+    expect(series).toHaveLength(2);
+    expect(series[1].weekStart).toBe("2026-07-06");
+    expect(series[1].hits).toBe(2);
+    expect(series[1].misses).toBe(1);
+    expect(series[1].pct).toBe(67);
+  });
+
+  it("returns pct: null (not 0) for a week with zero resolved check-ins", () => {
+    const series = weeklyConsistencySeries([], 3, NOW, TZ);
+    expect(series.every((w) => w.pct === null)).toBe(true);
+  });
+
+  it("excludes pending status from the ratio", () => {
+    const checkins = [
+      { period_start: "2026-07-06", status: "hit" },
+      { period_start: "2026-07-07", status: "pending" },
+    ];
+    const series = weeklyConsistencySeries(checkins, 1, NOW, TZ);
+    expect(series[0].hits).toBe(1);
+    expect(series[0].misses).toBe(0);
+    expect(series[0].pct).toBe(100);
+  });
+
+  it("orders weeks oldest-to-newest, array length equals weeksBack", () => {
+    const series = weeklyConsistencySeries([], 4, NOW, TZ);
+    expect(series.map((w) => w.weekStart)).toEqual([
+      "2026-06-15",
+      "2026-06-22",
+      "2026-06-29",
+      "2026-07-06",
+    ]);
   });
 });

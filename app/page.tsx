@@ -89,12 +89,14 @@ export default function Home() {
           <h1 className="font-display text-4xl font-bold tracking-tight">
             Habit <span className="font-normal italic text-ember">Stakes</span>
           </h1>
-          <Link
-            href="/ledger"
-            className="eyebrow text-moss underline underline-offset-4"
-          >
-            Ledger
-          </Link>
+          <div className="flex gap-4">
+            <Link href="/trends" className="eyebrow text-moss underline underline-offset-4">
+              Trends
+            </Link>
+            <Link href="/ledger" className="eyebrow text-moss underline underline-offset-4">
+              Ledger
+            </Link>
+          </div>
         </div>
         <div className="mt-4 h-px bg-ink/10" />
       </header>

@@ -89,3 +89,31 @@ export function consistencyPct(
   const hits = resolved.filter((c) => c.status === "hit").length;
   return Math.round((hits / resolved.length) * 100);
 }
+
+export const TREND_WEEKS = 12;
+
+/**
+ * Weekly hit-rate buckets for a trend chart, oldest to newest, ending at the
+ * current (in-progress) week. Pending periods are excluded from the ratio —
+ * same rule as consistencyPct. A week with zero resolved check-ins gets
+ * pct: null (no data), distinct from a real 0%.
+ */
+export function weeklyConsistencySeries(
+  checkins: { period_start: string; status: string }[],
+  weeksBack: number = TREND_WEEKS,
+  now: Date = new Date(),
+  tz: string = APP_TZ
+): { weekStart: string; hits: number; misses: number; pct: number | null }[] {
+  const currentWeek = weekStartISO(localDateISO(now, tz));
+  const weeks: string[] = [];
+  for (let i = weeksBack - 1; i >= 0; i--) {
+    weeks.push(addDays(currentWeek, -7 * i));
+  }
+  return weeks.map((weekStart) => {
+    const inWeek = checkins.filter((c) => weekStartISO(c.period_start) === weekStart);
+    const hits = inWeek.filter((c) => c.status === "hit").length;
+    const misses = inWeek.filter((c) => c.status === "miss").length;
+    const total = hits + misses;
+    return { weekStart, hits, misses, pct: total === 0 ? null : Math.round((hits / total) * 100) };
+  });
+}
