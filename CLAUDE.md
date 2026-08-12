@@ -1,4 +1,6 @@
-# Habit Stakes — Claude Code Context
+# Abhy — Claude Code Context
+
+*"Abhy" — short for "abhyasa," Kannada for habit.*
 
 ## What this is
 A habit tracker with real (manually-settled) stakes and retrieval-grounded

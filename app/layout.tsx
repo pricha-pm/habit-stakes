@@ -2,12 +2,12 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Habit Stakes",
-  description: "Miss a habit, owe a friend. Real stakes, grounded coaching.",
+  title: "Abhy",
+  description: "Small habits. Real stakes. Miss a habit, owe a friend.",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
-    title: "Habit Stakes",
+    title: "Abhy",
     statusBarStyle: "default",
   },
   icons: {
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f7f4d5",
+  themeColor: "#faf8f4",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,

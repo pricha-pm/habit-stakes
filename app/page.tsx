@@ -84,43 +84,43 @@ export default function Home() {
 
   return (
     <main>
-      <header className="pt-8 pb-6">
-        <div className="flex items-baseline justify-between">
-          <h1 className="font-display text-4xl font-bold tracking-tight">
-            Habit <span className="font-normal italic text-ember">Stakes</span>
-          </h1>
-          <div className="flex gap-4">
-            <Link href="/trends" className="eyebrow text-moss underline underline-offset-4">
+      <header className="hero -mx-4 px-4 pt-8 pb-6 shadow-sm">
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="font-mono text-xl font-black uppercase tracking-[0.12em] text-ink/85">
+              Abhy
+            </h1>
+            <p className="mt-1 text-[11px] text-ink/70">Small habits. Real stakes.</p>
+          </div>
+          <div className="flex gap-4 pt-0.5">
+            <Link href="/trends" className="eyebrow text-ink/70 underline underline-offset-4">
               Trends
             </Link>
-            <Link href="/ledger" className="eyebrow text-moss underline underline-offset-4">
+            <Link href="/ledger" className="eyebrow text-ink/70 underline underline-offset-4">
               Ledger
             </Link>
           </div>
         </div>
-        <div className="mt-4 h-px bg-ink/10" />
+
+        {totalOwedEntries.length > 0 && (
+          <div className="mt-6 space-y-3">
+            {totalOwedEntries.map(([friend, amount]) => (
+              <div key={friend}>
+                <p className="eyebrow text-ink/60">You owe</p>
+                <p className="font-display text-2xl font-bold text-ink">
+                  {friend} — ${amount.toFixed(2)}
+                </p>
+              </div>
+            ))}
+            <Link href="/ledger" className="eyebrow inline-block text-ink/70 underline underline-offset-4">
+              Settle up
+            </Link>
+          </div>
+        )}
       </header>
 
-      {totalOwedEntries.length > 0 && (
-        <div className="mb-6 space-y-2">
-          {totalOwedEntries.map(([friend, amount]) => (
-            <div key={friend} className="rounded-2xl bg-ember px-5 py-4 text-ink shadow-sm">
-              <p className="font-display text-lg">
-                You owe <span className="font-bold">{friend}</span>{" "}
-                <span className="font-bold">${amount.toFixed(2)}</span>
-              </p>
-              <Link
-                href="/ledger"
-                className="eyebrow mt-1 inline-block text-ink/70 underline underline-offset-4"
-              >
-                Settle up
-              </Link>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {result && <MissResult result={result} onDismiss={() => setResult(null)} />}
+      <div className="pt-6">
+        {result && <MissResult result={result} onDismiss={() => setResult(null)} />}
       {error && (
         <div className="mb-4 rounded-xl bg-ember-light px-4 py-2 text-sm text-ink">{error}</div>
       )}
@@ -151,6 +151,7 @@ export default function Home() {
           </Link>
         </>
       )}
+      </div>
     </main>
   );
 }

@@ -1,4 +1,6 @@
-# Habit Stakes
+# Abhy
+
+*Abhy — short for "abhyasa," Kannada for habit.*
 
 A habit tracker where missing costs you real money — owed to a real friend — and slipping up gets you a coaching nudge grounded in your own past check-ins, not generic motivation.
 
@@ -9,7 +11,7 @@ Most habit trackers fail their users in two research-documented ways:
 1. **Streak resets punish the wrong thing.** The foundational UCL habit study (Lally 2010) found that missing a single day doesn't materially affect habit formation — yet streak-based apps wipe weeks of visible progress over one slip, triggering the "abstinence violation effect" that predicts total abandonment. ~92% of habit-tracking attempts die within 60 days, largely from streak guilt.
 2. **Their motivation is fake.** Badges and gamified points don't move behavior. What does, per the deposit-contract literature: your own money at risk (losses feel ~2× as intense as equivalent gains) stacked with accountability to a specific named person (roughly doubles goal attainment odds vs. private tracking).
 
-Habit Stakes bets on the evidence-backed combination no mainstream tracker offers:
+Abhy bets on the evidence-backed combination no mainstream tracker offers:
 
 - **Real stakes** — each miss adds to a running ledger owed to a named friend, settled manually via Venmo. The app tracks the money; the awkwardness of owing your friend does the motivating.
 - **Forgiveness-first progress** — rolling 30-day consistency % instead of streaks. A single miss never visually erases progress.
