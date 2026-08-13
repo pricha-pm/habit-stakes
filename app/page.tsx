@@ -80,6 +80,17 @@ export default function Home() {
     await load();
   };
 
+  const deleteHabit = async (habitId: string) => {
+    setError(null);
+    const res = await fetch(`/api/habits/${habitId}`, { method: "DELETE" });
+    if (!res.ok) {
+      const data = await res.json();
+      setError(data.error);
+      return;
+    }
+    await load();
+  };
+
   const totalOwedEntries = Object.entries(owedTotals).filter(([, amt]) => amt > 0);
 
   return (
@@ -93,6 +104,9 @@ export default function Home() {
             <p className="mt-1 text-[11px] text-ink/70">Small habits. Real stakes.</p>
           </div>
           <div className="flex gap-4 pt-0.5">
+            <Link href="/info" className="eyebrow text-ink/70 underline underline-offset-4">
+              Info
+            </Link>
             <Link href="/trends" className="eyebrow text-ink/70 underline underline-offset-4">
               Trends
             </Link>
@@ -133,7 +147,7 @@ export default function Home() {
 
           <section className="space-y-4">
             {habits.map((h) => (
-              <HabitCard key={h.id} habit={h} onCheckIn={checkIn} />
+              <HabitCard key={h.id} habit={h} onCheckIn={checkIn} onDelete={deleteHabit} />
             ))}
           </section>
 
@@ -267,12 +281,21 @@ function PendingSection({
 function HabitCard({
   habit,
   onCheckIn,
+  onDelete,
 }: {
   habit: Habit;
   onCheckIn: (habitId: string, periodStart: string, status: "hit" | "miss", note: string) => void;
+  onDelete: (habitId: string) => Promise<void>;
 }) {
+  const [confirming, setConfirming] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const done = habit.current_checkin && habit.current_checkin.status !== "pending";
   const periodLabel = habit.cadence === "daily" ? "today" : "this week";
+
+  const confirmDelete = async () => {
+    setDeleting(true);
+    await onDelete(habit.id);
+  };
 
   return (
     <div className="rounded-2xl border border-ink/10 bg-white p-4 shadow-sm">
@@ -310,6 +333,35 @@ function HabitCard({
             onCheckIn(habit.id, habit.current_period_start, status, note)
           }
         />
+      )}
+
+      {confirming ? (
+        <div className="mt-3 flex items-center justify-between rounded-xl bg-ember-light px-3 py-2">
+          <span className="text-xs text-ink">Delete {habit.name}? This can&apos;t be undone.</span>
+          <div className="flex shrink-0 gap-3 pl-3">
+            <button
+              onClick={confirmDelete}
+              disabled={deleting}
+              className="text-xs font-semibold text-ink underline disabled:opacity-50"
+            >
+              {deleting ? "Deleting…" : "Yes, delete"}
+            </button>
+            <button
+              onClick={() => setConfirming(false)}
+              disabled={deleting}
+              className="text-xs text-ink/60 underline disabled:opacity-50"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ) : (
+        <button
+          onClick={() => setConfirming(true)}
+          className="mt-3 text-xs text-ink/40 underline"
+        >
+          Delete habit
+        </button>
       )}
     </div>
   );
