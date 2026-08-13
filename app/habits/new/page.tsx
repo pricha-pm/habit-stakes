@@ -9,6 +9,7 @@ export default function NewHabit() {
   const [activeCount, setActiveCount] = useState(0);
   const [name, setName] = useState("");
   const [cadence, setCadence] = useState<"daily" | "weekly">("daily");
+  const [hasStake, setHasStake] = useState(true);
   const [stake, setStake] = useState("5");
   const [owedTo, setOwedTo] = useState("");
   const [intention, setIntention] = useState("");
@@ -32,8 +33,8 @@ export default function NewHabit() {
       body: JSON.stringify({
         name,
         cadence,
-        stake_amount: Number(stake),
-        owed_to: owedTo,
+        stake_amount: hasStake ? Number(stake) : undefined,
+        owed_to: hasStake ? owedTo : undefined,
         implementation_intention: intention || undefined,
       }),
     });
@@ -49,10 +50,10 @@ export default function NewHabit() {
   return (
     <main>
       <header className="pt-8 pb-6">
-        <Link href="/" className="eyebrow text-moss underline underline-offset-4">
+        <Link href="/" className="eyebrow text-ink/70 underline underline-offset-4">
           ← Back
         </Link>
-        <h1 className="mt-3 font-display text-4xl font-bold tracking-tight">New habit</h1>
+        <h1 className="mt-3 font-display text-3xl font-black">New habit</h1>
         <div className="mt-4 h-px bg-ink/10" />
       </header>
 
@@ -94,27 +95,54 @@ export default function NewHabit() {
           </div>
         </Field>
 
-        <Field label="Stake per miss ($)">
-          <input
-            type="number"
-            min="1"
-            step="1"
-            value={stake}
-            onChange={(e) => setStake(e.target.value)}
-            required
-            className="w-full rounded-xl border border-sand bg-white p-3"
-          />
-        </Field>
+        <label className="flex items-center justify-between rounded-xl border border-sand bg-white p-3">
+          <span className="text-sm font-medium">Add a money stake</span>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={hasStake}
+            onClick={() => setHasStake((v) => !v)}
+            className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
+              hasStake ? "bg-moss" : "bg-sand"
+            }`}
+          >
+            <span
+              className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
+                hasStake ? "translate-x-[22px]" : "translate-x-0.5"
+              }`}
+            />
+          </button>
+        </label>
 
-        <Field label="Who do you owe when you miss?">
-          <input
-            value={owedTo}
-            onChange={(e) => setOwedTo(e.target.value)}
-            placeholder="A real friend's name — you'll Venmo them"
-            required
-            className="w-full rounded-xl border border-sand bg-white p-3"
-          />
-        </Field>
+        {hasStake ? (
+          <>
+            <Field label="Stake per miss ($)">
+              <input
+                type="number"
+                min="1"
+                step="1"
+                value={stake}
+                onChange={(e) => setStake(e.target.value)}
+                required={hasStake}
+                className="w-full rounded-xl border border-sand bg-white p-3"
+              />
+            </Field>
+
+            <Field label="Who do you owe when you miss?">
+              <input
+                value={owedTo}
+                onChange={(e) => setOwedTo(e.target.value)}
+                placeholder="A real friend's name — you'll Venmo them"
+                required={hasStake}
+                className="w-full rounded-xl border border-sand bg-white p-3"
+              />
+            </Field>
+          </>
+        ) : (
+          <p className="text-xs text-ink/50">
+            No money on the line — just tracking consistency for this one.
+          </p>
+        )}
 
         <Field
           label="Implementation intention (optional)"
@@ -137,7 +165,7 @@ export default function NewHabit() {
           disabled={busy}
           className="w-full rounded-full bg-moss py-3.5 font-semibold text-white active:scale-95 disabled:opacity-50"
         >
-          {busy ? "Creating…" : "Put money on it"}
+          {busy ? "Creating…" : hasStake ? "Put money on it" : "Add habit"}
         </button>
       </form>
     </main>

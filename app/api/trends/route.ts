@@ -1,15 +1,18 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { addDays, localDateISO, TREND_WEEKS } from "@/lib/periods";
+import { addDays, localDateISO } from "@/lib/periods";
 
 export const dynamic = "force-dynamic";
 
-// Weekly trend data: habits + resolved (hit/miss) checkins going back far
-// enough to cover TREND_WEEKS full weeks. Bucketing into weeks happens
-// client-side via lib/periods.weeklyConsistencySeries.
+// Trend data: habits + resolved (hit/miss) checkins going back a generous
+// window (just over a year) so the Trends page can offer week/month/custom
+// range presets from a single fetch, with all bucketing done client-side
+// via lib/periods.consistencySeries. Payload stays small (a few hundred
+// rows at most) for a single-user app, so one wide fetch beats refetching
+// on every range change.
 export async function GET() {
   const database = db();
-  const cutoff = addDays(localDateISO(), -(TREND_WEEKS * 7 + 7));
+  const cutoff = addDays(localDateISO(), -400);
 
   const [habitsRes, checkinsRes] = await Promise.all([
     database

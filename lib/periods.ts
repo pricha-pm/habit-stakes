@@ -90,30 +90,54 @@ export function consistencyPct(
   return Math.round((hits / resolved.length) * 100);
 }
 
-export const TREND_WEEKS = 12;
+export type TrendGranularity = "day" | "week";
+
+export type TrendBucket = {
+  bucketStart: string;
+  hits: number;
+  misses: number;
+  pct: number | null;
+};
 
 /**
- * Weekly hit-rate buckets for a trend chart, oldest to newest, ending at the
- * current (in-progress) week. Pending periods are excluded from the ratio —
- * same rule as consistencyPct. A week with zero resolved check-ins gets
- * pct: null (no data), distinct from a real 0%.
+ * Hit-rate buckets for a trend chart over an explicit [fromISO, toISO]
+ * range, oldest to newest. "day" buckets are single days; "week" buckets
+ * are Monday-aligned 7-day spans (so a bucket can start before `fromISO`
+ * or end after `toISO` at the range's edges). Pending periods are excluded
+ * from the ratio — same rule as consistencyPct. A bucket with zero
+ * resolved check-ins gets pct: null (no data), distinct from a real 0%.
  */
-export function weeklyConsistencySeries(
+export function consistencySeries(
   checkins: { period_start: string; status: string }[],
-  weeksBack: number = TREND_WEEKS,
-  now: Date = new Date(),
-  tz: string = APP_TZ
-): { weekStart: string; hits: number; misses: number; pct: number | null }[] {
-  const currentWeek = weekStartISO(localDateISO(now, tz));
-  const weeks: string[] = [];
-  for (let i = weeksBack - 1; i >= 0; i--) {
-    weeks.push(addDays(currentWeek, -7 * i));
+  fromISO: string,
+  toISO: string,
+  granularity: TrendGranularity
+): TrendBucket[] {
+  const buckets: string[] = [];
+  if (granularity === "day") {
+    for (let cursor = fromISO; cursor <= toISO; cursor = addDays(cursor, 1)) {
+      buckets.push(cursor);
+    }
+  } else {
+    const lastWeek = weekStartISO(toISO);
+    for (let cursor = weekStartISO(fromISO); cursor <= lastWeek; cursor = addDays(cursor, 7)) {
+      buckets.push(cursor);
+    }
   }
-  return weeks.map((weekStart) => {
-    const inWeek = checkins.filter((c) => weekStartISO(c.period_start) === weekStart);
-    const hits = inWeek.filter((c) => c.status === "hit").length;
-    const misses = inWeek.filter((c) => c.status === "miss").length;
+
+  return buckets.map((bucketStart) => {
+    const bucketEnd = granularity === "day" ? bucketStart : addDays(bucketStart, 6);
+    const inBucket = checkins.filter(
+      (c) => c.period_start >= bucketStart && c.period_start <= bucketEnd
+    );
+    const hits = inBucket.filter((c) => c.status === "hit").length;
+    const misses = inBucket.filter((c) => c.status === "miss").length;
     const total = hits + misses;
-    return { weekStart, hits, misses, pct: total === 0 ? null : Math.round((hits / total) * 100) };
+    return {
+      bucketStart,
+      hits,
+      misses,
+      pct: total === 0 ? null : Math.round((hits / total) * 100),
+    };
   });
 }

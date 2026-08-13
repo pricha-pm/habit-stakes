@@ -2,12 +2,12 @@ import { describe, expect, it } from "vitest";
 import {
   addDays,
   consistencyPct,
+  consistencySeries,
   currentPeriodStart,
   lapsedPeriodStarts,
   localDateISO,
   nextPeriodStart,
   weekStartISO,
-  weeklyConsistencySeries,
 } from "../lib/periods";
 
 // 2026-07-08T12:00:00-07:00 (a Wednesday in PT)
@@ -125,44 +125,47 @@ describe("consistencyPct (no streak resets)", () => {
   });
 });
 
-describe("weeklyConsistencySeries (trend chart data)", () => {
-  it("buckets checkins into their week and computes pct, current week last", () => {
+describe("consistencySeries (flexible trend chart data)", () => {
+  it("day granularity: one bucket per day, inclusive of both ends", () => {
     const checkins = [
-      { period_start: "2026-07-06", status: "hit" }, // current week (Mon Jul 6)
-      { period_start: "2026-07-07", status: "hit" },
-      { period_start: "2026-07-08", status: "miss" },
+      { period_start: "2026-07-06", status: "hit" },
+      { period_start: "2026-07-07", status: "miss" },
+      { period_start: "2026-07-08", status: "hit" },
     ];
-    const series = weeklyConsistencySeries(checkins, 2, NOW, TZ);
-    expect(series).toHaveLength(2);
-    expect(series[1].weekStart).toBe("2026-07-06");
-    expect(series[1].hits).toBe(2);
-    expect(series[1].misses).toBe(1);
-    expect(series[1].pct).toBe(67);
+    const series = consistencySeries(checkins, "2026-07-06", "2026-07-08", "day");
+    expect(series.map((b) => b.bucketStart)).toEqual([
+      "2026-07-06",
+      "2026-07-07",
+      "2026-07-08",
+    ]);
+    expect(series[0]).toMatchObject({ hits: 1, misses: 0, pct: 100 });
+    expect(series[1]).toMatchObject({ hits: 0, misses: 1, pct: 0 });
   });
 
-  it("returns pct: null (not 0) for a week with zero resolved check-ins", () => {
-    const series = weeklyConsistencySeries([], 3, NOW, TZ);
-    expect(series.every((w) => w.pct === null)).toBe(true);
+  it("week granularity: Monday-aligned buckets spanning the range", () => {
+    // range Jul 8 (Wed) to Jul 15 (Wed) spans the weeks of Jul 6 and Jul 13
+    const series = consistencySeries([], "2026-07-08", "2026-07-15", "week");
+    expect(series.map((b) => b.bucketStart)).toEqual(["2026-07-06", "2026-07-13"]);
+  });
+
+  it("returns pct: null (not 0) for a bucket with zero resolved check-ins", () => {
+    const series = consistencySeries([], "2026-07-06", "2026-07-08", "day");
+    expect(series.every((b) => b.pct === null)).toBe(true);
   });
 
   it("excludes pending status from the ratio", () => {
     const checkins = [
       { period_start: "2026-07-06", status: "hit" },
-      { period_start: "2026-07-07", status: "pending" },
+      { period_start: "2026-07-06", status: "pending" },
     ];
-    const series = weeklyConsistencySeries(checkins, 1, NOW, TZ);
+    const series = consistencySeries(checkins, "2026-07-06", "2026-07-06", "day");
     expect(series[0].hits).toBe(1);
     expect(series[0].misses).toBe(0);
     expect(series[0].pct).toBe(100);
   });
 
-  it("orders weeks oldest-to-newest, array length equals weeksBack", () => {
-    const series = weeklyConsistencySeries([], 4, NOW, TZ);
-    expect(series.map((w) => w.weekStart)).toEqual([
-      "2026-06-15",
-      "2026-06-22",
-      "2026-06-29",
-      "2026-07-06",
-    ]);
+  it("a single-day range produces exactly one bucket", () => {
+    const series = consistencySeries([], "2026-07-08", "2026-07-08", "day");
+    expect(series).toHaveLength(1);
   });
 });

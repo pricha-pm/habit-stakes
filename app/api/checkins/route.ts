@@ -97,8 +97,10 @@ export async function POST(req: Request) {
   let nudge: { id: string; generated_text: string } | null = null;
 
   if (status === "miss") {
-    await billMiss(checkinId, habit);
-    owed = { to: habit.owed_to, amount: Number(habit.stake_amount) };
+    if (habit.stake_amount != null && habit.owed_to) {
+      await billMiss(checkinId, habit);
+      owed = { to: habit.owed_to, amount: Number(habit.stake_amount) };
+    }
 
     if (note && embedding) {
       try {

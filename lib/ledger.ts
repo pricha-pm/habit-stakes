@@ -1,13 +1,15 @@
 import { db } from "./db";
 
-type Habit = { id: string; stake_amount: number; owed_to: string };
+type StakedHabit = { id: string; stake_amount: number; owed_to: string };
 
 /**
  * Creates the ledger entry for a missed check-in. Idempotent: checkin_id is
  * unique on ledger_entries, so a duplicate insert is a no-op — a miss can
- * never double-bill.
+ * never double-bill. Caller must only invoke this for habits that actually
+ * carry a stake (stake_amount and owed_to both set) — habits tracked
+ * without money never reach here.
  */
-export async function billMiss(checkinId: string, habit: Habit): Promise<void> {
+export async function billMiss(checkinId: string, habit: StakedHabit): Promise<void> {
   const { error } = await db().from("ledger_entries").insert({
     habit_id: habit.id,
     checkin_id: checkinId,

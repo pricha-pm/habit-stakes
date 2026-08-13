@@ -14,8 +14,8 @@ type Habit = {
   id: string;
   name: string;
   cadence: "daily" | "weekly";
-  stake_amount: number;
-  owed_to: string;
+  stake_amount: number | null;
+  owed_to: string | null;
   implementation_intention: string | null;
   consistency_pct: number | null;
   current_period_start: string;
@@ -110,9 +110,6 @@ export default function Home() {
             <Link href="/trends" className="eyebrow text-ink/70 underline underline-offset-4">
               Trends
             </Link>
-            <Link href="/ledger" className="eyebrow text-ink/70 underline underline-offset-4">
-              Ledger
-            </Link>
           </div>
         </div>
 
@@ -126,7 +123,7 @@ export default function Home() {
                 </p>
               </div>
             ))}
-            <Link href="/ledger" className="eyebrow inline-block text-ink/70 underline underline-offset-4">
+            <Link href="/trends" className="eyebrow inline-block text-ink/70 underline underline-offset-4">
               Settle up
             </Link>
           </div>
@@ -303,8 +300,9 @@ function HabitCard({
         <div>
           <h3 className="font-display text-xl font-semibold">{habit.name}</h3>
           <p className="eyebrow mt-1 text-ink/45">
-            ${Number(habit.stake_amount).toFixed(2)} to {habit.owed_to} per miss ·{" "}
-            {habit.cadence}
+            {habit.stake_amount != null && habit.owed_to
+              ? `$${Number(habit.stake_amount).toFixed(2)} to ${habit.owed_to} per miss · ${habit.cadence}`
+              : `No stake · ${habit.cadence}`}
           </p>
         </div>
         {habit.consistency_pct !== null && (
