@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { createClient } from "@/lib/supabase-server";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const { data, error } = await db()
+  const supabase = await createClient();
+  const { data, error } = await supabase
     .from("ledger_entries")
     .select("id, amount, owed_to, settled, created_at, habits(name)")
     .order("created_at", { ascending: false });

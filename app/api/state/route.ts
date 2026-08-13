@@ -1,13 +1,15 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { createClient } from "@/lib/supabase-server";
 import { addDays, consistencyPct, currentPeriodStart, localDateISO, Cadence } from "@/lib/periods";
 
 export const dynamic = "force-dynamic";
 
 // Everything the home screen needs in one fetch: habits with consistency %
 // and today's status, pending confirmations, and per-friend unsettled totals.
+// Session-scoped client -- RLS means every query here is already implicitly
+// filtered to the signed-in user's own habits/checkins/ledger entries.
 export async function GET() {
-  const database = db();
+  const database = await createClient();
 
   const [habitsRes, checkinsRes, ledgerRes] = await Promise.all([
     database.from("habits").select("*").eq("active", true).order("created_at"),

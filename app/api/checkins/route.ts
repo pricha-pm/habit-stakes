@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { createClient } from "@/lib/supabase-server";
 import { embed, EMBEDDING_MODEL } from "@/lib/embeddings";
 import { billMiss } from "@/lib/ledger";
 import { generateNudge } from "@/lib/nudge";
@@ -19,13 +19,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Status must be hit or miss" }, { status: 400 });
   }
 
-  const database = db();
+  const database = await createClient();
   const { data: habit, error: habitError } = await database
     .from("habits")
     .select("*")
     .eq("id", habit_id)
     .single();
   if (habitError || !habit) {
+    // Also true if the habit exists but isn't yours -- RLS makes it
+    // invisible rather than returning a 403, which is fine here.
     return NextResponse.json({ error: "Habit not found" }, { status: 404 });
   }
 

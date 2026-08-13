@@ -1,4 +1,5 @@
 import Link from "next/link";
+import SignOutButton from "./SignOutButton";
 
 const PRINCIPLES = [
   {
@@ -62,6 +63,10 @@ export default function Info() {
           </div>
         ))}
       </section>
+
+      <div className="mt-8 border-t border-ink/10 pt-6">
+        <SignOutButton />
+      </div>
     </main>
   );
 }

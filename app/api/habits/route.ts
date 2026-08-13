@@ -1,9 +1,17 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { createClient } from "@/lib/supabase-server";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return NextResponse.json({ error: "Not signed in" }, { status: 401 });
+  }
+
   const body = await req.json();
   const { name, cadence, stake_amount, owed_to, implementation_intention } = body;
 
@@ -33,9 +41,10 @@ export async function POST(req: Request) {
     }
   }
 
-  const { data, error } = await db()
+  const { data, error } = await supabase
     .from("habits")
     .insert({
+      owner_id: user.id,
       name: name.trim(),
       cadence,
       stake_amount: stake,

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { createClient } from "@/lib/supabase-server";
 
 export const dynamic = "force-dynamic";
 
@@ -9,7 +9,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   if (typeof settled !== "boolean") {
     return NextResponse.json({ error: "settled must be a boolean" }, { status: 400 });
   }
-  const { error } = await db().from("ledger_entries").update({ settled }).eq("id", id);
+  const supabase = await createClient();
+  const { error } = await supabase.from("ledger_entries").update({ settled }).eq("id", id);
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

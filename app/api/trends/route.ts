@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { createClient } from "@/lib/supabase-server";
 import { addDays, localDateISO } from "@/lib/periods";
 
 export const dynamic = "force-dynamic";
@@ -7,11 +7,10 @@ export const dynamic = "force-dynamic";
 // Trend data: habits + resolved (hit/miss) checkins going back a generous
 // window (just over a year) so the Trends page can offer week/month/custom
 // range presets from a single fetch, with all bucketing done client-side
-// via lib/periods.consistencySeries. Payload stays small (a few hundred
-// rows at most) for a single-user app, so one wide fetch beats refetching
-// on every range change.
+// via lib/periods.consistencySeries. Session-scoped client -- RLS filters
+// both queries to the signed-in user's own habits automatically.
 export async function GET() {
-  const database = db();
+  const database = await createClient();
   const cutoff = addDays(localDateISO(), -400);
 
   const [habitsRes, checkinsRes] = await Promise.all([
